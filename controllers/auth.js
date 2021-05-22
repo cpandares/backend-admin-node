@@ -2,6 +2,7 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 const  Usuario  = require('../models/usuario');
 const { generateToken } = require('../helpers/jwt');
+const { googleVerify } = require('../helpers/google-signin');
 
 const login = async( req, res = response )=>{
 
@@ -30,7 +31,8 @@ const login = async( req, res = response )=>{
                 msg:'Password not found'
             });
         }
-
+        
+        //Generar JWT
         const token = await generateToken( userDb.id );
 
         res.json({
@@ -48,6 +50,58 @@ const login = async( req, res = response )=>{
 
 }
 
+const googleSignIn = async( req, res )=>{
+
+    const token = req.body.token;
+
+    try {
+
+      const { name,email,picture  } = await googleVerify(token);
+
+      //Verificar email existe
+      const usuarioDb = Usuario.findOne({email});
+      let usuario;
+
+      if(!usuarioDb){
+
+        usuario = new Usuario({
+            nombre: name,
+            email,
+            password:'@@@',
+            img:picture,
+            google: true
+        })
+      }else{
+          usuario = usuarioDb;
+          usuario.google = true;
+          usuario.password = '@@@@'
+      }
+
+      //Guardar en Db
+
+      await usuario.save();
+
+      //Generar JWT
+      const token = await generateToken( usuario.id );
+
+        res.json({
+            ok:true,
+            msg : 'Google Signin',
+            name,email,picture
+        })
+        
+    } catch (error) {
+        res.status(401).json({
+            ok:false,
+            msg : 'No Token'
+        })
+    }
+
+  
+
+}
+
 module.exports = {
-    login
+    login,
+    googleSignIn
 }
