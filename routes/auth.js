@@ -8,7 +8,8 @@ const { check } = require('express-validator');
 
 
 const { validarCampos } = require('../middlewares/validar-campos');
-const { login, googleSignIn } = require('../controllers/auth');
+const { login, googleSignIn, renewToken } = require('../controllers/auth');
+const { validateToken } = require('../middlewares/validate-token');
 
 const router = Router();
 
@@ -24,6 +25,14 @@ router.post('/', [
     check('token','Toeken is Required').notEmpty(),
     validarCampos
  ] ,googleSignIn);
+
+
+ router.get('/renew', [ 
+   
+   validateToken
+] ,renewToken);
+
+
 
 
 

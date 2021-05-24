@@ -24,10 +24,12 @@ router.post('/', [
 
 
 router.put('/:id', [
-   
+   validateToken,
+   check('nombre', 'Name Hospital is Required').notEmpty(),
+   validarCampos    
  ] ,updateHospital);
 
- router.delete('/:id', deleteHospital);
+ router.delete('/:id',validateToken, deleteHospital);
  
 
 module.exports = router;

@@ -26,10 +26,13 @@
  
  
  router.put('/:id', [
-    
+   validateToken,
+   check("nombre", "Name is required").notEmpty(),
+   check("hospital", "Id Hospital is not valid").isMongoId(),
+   validarCampos
   ] ,updateMedico);
  
-  router.delete('/:id', deleteMedico);
+  router.delete('/:id',validateToken, deleteMedico);
   
  
  module.exports = router;

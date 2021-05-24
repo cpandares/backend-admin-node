@@ -48,18 +48,83 @@
   
  }
  
- const updateMedico = (req, res=response)=>{
+ const updateMedico = async(req, res=response)=>{
+
+    const id = req.params.id;
+    const uid = req.uid;
+
+    try {
+
+        const medico = await Medico.findById(id);
+
+        if(!medico){
+            return res.status(404).json({
+                ok:false,
+                msg:'No results'
+            });
+        }
+
+        const medicoChanges = {
+            ...req.body,
+            usuario:uid
+        }
+
+        const medicoupdated = await Medico.findByIdAndUpdate(id,medicoChanges, { new:true });
+
+        res.json({
+            ok:true,
+            medico : medicoupdated
+        });
+    
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'Something wrong please contact administrator'
+        })
+        
+    }
+
  
-     res.json({
-         ok:true,
-         msg:'updateHospital'
-     });
- 
+   
  
  }
  
- const deleteMedico = (req, res=response)=>{
+ const deleteMedico = async(req, res=response)=>{
  
+    const id = req.params.id;
+
+    try {
+
+        const medico = await Medico.findById(id);
+
+        if(!medico){
+            return res.status(404).json({
+                ok:false,
+                msg:'No results'
+            });
+        }
+
+       
+
+        const medicoDeleted = await Medico.findByIdAndDelete(id);
+
+        res.json({
+            ok:true,
+           msg:'Medico Deleted'
+        });
+    
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg:'Something wrong please contact administrator'
+        })
+        
+    }
+
      res.json({
          ok:true,
          msg:'deleteHospital'

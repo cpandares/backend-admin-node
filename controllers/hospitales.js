@@ -49,23 +49,87 @@ const createHospital = async(req, res = response)=>{
 
 }
 
-const updateHospital = (req, res=response)=>{
+const updateHospital = async(req, res=response)=>{
 
-    res.json({
-        ok:true,
-        msg:'updateHospital'
-    });
+    const id = req.params.id;
+    const uid = req.uid;
+
+  
+    try {
+
+        const hospitalDb = await Hospital.findById(id);
+
+        if(!hospitalDb){
+            return res.status(404).json({
+                ok:false,
+                msg:'No hospital found'
+            });
+        }
+        
+       const changesHospital = {
+           ...req.body,
+            usuario:uid
+       }
+
+       const hospitalUpdate = await Hospital.findByIdAndUpdate(id,changesHospital, { new:true });
+
+        
+        res.json({
+            ok:true,
+            hospital:hospitalUpdate
+        });
+        
+    } catch (error) {
+
+        console.log(error);
+        res.json({
+            ok:false,
+            msg:'Something wrong, please contact administrator'
+        })
+        
+    }
+
+
 
 
 }
 
-const deleteHospital = (req, res=response)=>{
+const deleteHospital = async(req, res=response)=>{
 
-    res.json({
-        ok:true,
-        msg:'deleteHospital'
-    });
+    const id = req.params.id;
 
+    try {
+
+        const hospitalDb = await Hospital.findById(id);
+
+        if(!hospitalDb){
+            return res.status(404).json({
+                ok:false,
+                msg:'No hospital found'
+            });
+        }
+        
+      
+
+       const hospitalDelete = await Hospital.findByIdAndDelete(id);
+
+
+        res.json({
+            ok:true,
+            msg:'Hopital Deleted'
+        });
+    
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:true,
+            msg:'Something wrongs '
+        });
+    
+    }
+
+  
 
 }
 
