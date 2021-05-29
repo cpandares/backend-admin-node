@@ -20,15 +20,15 @@ router.post('/', [
     validarCampos
  ] ,login);
 
- router.post('/google', [ 
-   
-    check('token','Toeken is Required').notEmpty(),
+ 
+
+ router.post('/google', [    
+    check('token','Token is Required').notEmpty(),
     validarCampos
  ] ,googleSignIn);
 
 
- router.get('/renew', [ 
-   
+ router.get('/renew', [    
    validateToken
 ] ,renewToken);
 

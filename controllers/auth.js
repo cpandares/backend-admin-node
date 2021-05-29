@@ -49,55 +49,54 @@ const login = async( req, res = response )=>{
     }
 
 }
+const googleSignIn = async( req, res = response ) => {
 
-const googleSignIn = async( req, res )=>{
-
-    const token = req.body.token;
-
+    const googleToken = req.body.token;
+   
     try {
 
-      const { name,email,picture  } = await googleVerify(token);
+        const { name, email, picture } = await googleVerify( googleToken );
 
-      //Verificar email existe
-      const usuarioDb = Usuario.findOne({email});
-      let usuario;
+     
+        const usuarioDB = await Usuario.findOne({ email });
+        let usuario;
 
-      if(!usuarioDb){
+        if ( !usuarioDB ) {
+            // si no existe el usuario
+            usuario = new Usuario({
+                nombre: name,
+                email,
+                password: '@@@',
+                img: picture,
+                google: true
+            });
+        } else {
+            // existe usuario
+            usuario = usuarioDB;
+            usuario.google = true;
+        }
 
-        usuario = new Usuario({
-            nombre: name,
-            email,
-            password:'@@@',
-            img:picture,
-            google: true
-        })
-      }else{
-          usuario = usuarioDb;
-          usuario.google = true;
-          usuario.password = '@@@@'
-      }
+        // Guardar en DB
+        await usuario.save();
 
-      //Guardar en Db
-
-      await usuario.save();
-
-      //Generar JWT
-      const token = await generateToken( usuario.id );
-
-        res.json({
-            ok:true,
-            msg : 'Google Signin',
-            name,email,picture
-        })
+        // Generar el TOKEN - JWT
+        const token = await generateToken( usuario.id );
         
+        res.json({
+            ok: true,
+            token
+        });
+
     } catch (error) {
+        
         res.status(401).json({
-            ok:false,
-            msg : 'No Token'
-        })
+            ok: false,
+            msg: 'Token no es correcto',
+        });
     }
 
-  
+
+
 
 }
 
@@ -108,9 +107,14 @@ const renewToken = async (req, res =  response)=>{
     //Generar JWT
     const token = await generateToken( uid );
 
+   
+    //Fin User by uid
+    usuarioDb = await Usuario.findById( uid );
+
     res.json({
         ok:true,
-        token
+        token,
+        usuario: usuarioDb
     })
 
 }
