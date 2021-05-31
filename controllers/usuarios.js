@@ -99,9 +99,9 @@ const updateUser =  async( req, res = response )=>{
 
         //Actualizaciones
 
-        const campos = req.body;
+        const { password, google, email, ...campos  } = req.body;
 
-        if(usuarioDb.email === req.body.email){
+       /* if ( usuarioDb.email === req.body.email ){
             delete campos.email;
         }else{
             const emailExist = await Usuario.findOne({ email:req.body.email });
@@ -113,12 +113,33 @@ const updateUser =  async( req, res = response )=>{
                 });
             }
 
+        }*/
+
+        if(usuarioDb !== email){
+            const emailExist = await Usuario.findOne({ email });
+
+            if(emailExist){
+                return res.status(400).json({
+                    ok:false,
+                    msg:'Email already exists'
+                });
+            }
         }
 
-        delete campos.password;
-        delete campos.google;
+        
+        if(!usuarioDb.google){
+            campos.email = email;
+        }else if(usuarioDb.email !== email){
+            return res.status(400).json({
+                ok:false,
+                msg:"Google user can't update email"
+            });
+        }
+        
+
 
         const userUpdate = await Usuario.findByIdAndUpdate(uid, campos,{ new:true });
+       
 
          res.json({
             ok : true,
