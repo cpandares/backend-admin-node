@@ -115,7 +115,7 @@ const updateUser =  async( req, res = response )=>{
 
         }*/
 
-        if(usuarioDb !== email){
+        if(usuarioDb.email !== email){
             const emailExist = await Usuario.findOne({ email });
 
             if(emailExist){

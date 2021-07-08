@@ -14,6 +14,19 @@
  
  
  }
+
+ const getMedicoById = async(req, res=response)=>{
+
+    const id = req.params.id;
+    const medico = await Medico.findById( id ).populate('usuario','nombre img').populate('hospital','nombre img');
+ 
+     res.json({
+         ok:true,
+        medico
+     });
+ 
+ 
+ }
  
  const createMedico = async (req, res=response)=>{
 
@@ -31,7 +44,7 @@
 
         res.json({
             ok:true,
-            msg:medicoDB
+            medico:medicoDB
         });
     
     
@@ -47,6 +60,8 @@
  
   
  }
+
+
  
  const updateMedico = async(req, res=response)=>{
 
@@ -118,7 +133,7 @@
         
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+     return res.status(500).json({
             ok:false,
             msg:'Something wrong please contact administrator'
         })
@@ -137,5 +152,6 @@
     getMedicos,
     createMedico,
     updateMedico,
-    deleteMedico
+    deleteMedico,
+    getMedicoById
  }

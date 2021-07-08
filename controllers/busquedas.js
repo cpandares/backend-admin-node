@@ -41,7 +41,7 @@ const getDocumentos = async( req,res  )=>{
         data = await  Hospital.find({ nombre:regex })
                               .populate('usuario', 'nombre img');  
     }else if(table==='medicos'){
-        data = await  Hospital.find({ nombre:regex })
+        data = await  Medicos.find({ nombre:regex })
                               .populate('usuario', 'nombre img')
                               .populate('medico','nombre img');  
     }else{

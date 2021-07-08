@@ -10,7 +10,7 @@
  const { validateToken } = require('../middlewares/validate-token');
  const { validarCampos } = require('../middlewares/validar-campos');
  
- const { createMedico, getMedicos, updateMedico,deleteMedico } = require('../controllers/medicos');
+ const { createMedico, getMedicos, updateMedico,deleteMedico, getMedicoById } = require('../controllers/medicos');
  
  const router = Router();
  
@@ -33,6 +33,8 @@
   ] ,updateMedico);
  
   router.delete('/:id',validateToken, deleteMedico);
+
+  router.get('/:id',validateToken, getMedicoById);
   
  
  module.exports = router;
