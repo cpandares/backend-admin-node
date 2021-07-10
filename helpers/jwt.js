@@ -29,6 +29,8 @@ const generateToken = ( uid )=>{
 
 }
 
+
 module.exports = {
-    generateToken
+    generateToken,
+ 
 }

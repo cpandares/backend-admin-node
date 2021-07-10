@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const  Usuario  = require('../models/usuario');
 const { generateToken } = require('../helpers/jwt');
 const { googleVerify } = require('../helpers/google-signin');
+const { menuFront } = require('../helpers/menu-front');
 
 const login = async( req, res = response )=>{
 
@@ -19,9 +20,7 @@ const login = async( req, res = response )=>{
             });
         }
 
-        //Valido password
-
-       
+        //Valido password       
 
         const validPassword = bcrypt.compareSync(password, userDb.password);
 
@@ -37,7 +36,9 @@ const login = async( req, res = response )=>{
 
         res.json({
             ok:true,
-            token
+            token,
+            menu: menuFront(userDb.role)
+        
         })
         
     } catch (error) {
@@ -86,7 +87,8 @@ const googleSignIn = async( req, res = response ) => {
         
         res.json({
             ok: true,
-            token
+            token,
+            menu: menuFront(usuario.role)
         });
 
     } catch (error) {
@@ -111,12 +113,13 @@ const renewToken = async (req, res =  response)=>{
 
    
     //Fin User by uid
-    usuarioDb = await Usuario.findById( uid );
+    userDb = await Usuario.findById( uid );
 
     res.json({
         ok:true,
         token,
-        usuario: usuarioDb
+        usuario: userDb,
+        menu: menuFront(userDb.role)
     })
 
 }
